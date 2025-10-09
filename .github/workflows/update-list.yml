@@ -1,0 +1,30 @@
+name: Update Adlist
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Perl if needed
+        run: sudo apt-get update && sudo apt-get install -y perl
+
+      - name: Run update script
+        run: |
+          chmod +x adblock-script.sh  # Делает скрипт исполняемым
+          ./adblock-script.sh  # Запускает скрипт для обновления ruadlist_easylist.txt
+
+      - name: Commit and push changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'ruadlist_easylist.txt'
+          message: 'Automated update of ruadlist_easylist.txt'
+          push: true
